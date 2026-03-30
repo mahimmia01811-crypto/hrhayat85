@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: stories
+    // Fields:
+    //   - title: string (required)
+    //   - content: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: readers
+    // Fields:
+    //   - peerId: string (required)
+    //   - lastActive: timestamp (required)
+    //   - status: string (required, enum: ['online', 'offline'])
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "mahimmia01811@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    // Story Rules
+    match /stories/{storyId} {
+      allow read: if true; // Publicly readable
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Reader Rules
+    match /readers/{readerId} {
+      // Readers can manage their own status
+      allow create: if true; // Anyone can start reading
+      allow update: if true; // Anyone can update their status
+      allow read: if isAdmin(); // Only admins can monitor readers
+    }
+
+    // User Profile Rules (for RBAC)
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create, update: if isAdmin();
+    }
+  }
+}

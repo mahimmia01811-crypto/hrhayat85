@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "Story": {
+      "title": "Story",
+      "description": "A long story or text to be read in the 3D book.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "The title of the story." },
+        "content": { "type": "string", "description": "The full rich text content of the story." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the story was published." }
+      },
+      "required": ["title", "content", "createdAt"]
+    },
+    "Reader": {
+      "title": "Reader",
+      "description": "A reader currently active on the site, with their PeerJS ID for live monitoring.",
+      "type": "object",
+      "properties": {
+        "peerId": { "type": "string", "description": "The PeerJS ID of the reader." },
+        "lastActive": { "type": "string", "format": "date-time", "description": "The last time the reader was active." },
+        "status": { "type": "string", "enum": ["online", "offline"], "description": "The current status of the reader." }
+      },
+      "required": ["peerId", "lastActive", "status"]
+    }
+  },
+  "firestore": {
+    "/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Collection of stories."
+    },
+    "/readers/{readerId}": {
+      "schema": "Reader",
+      "description": "Collection of active readers for live monitoring."
+    }
+  }
+}

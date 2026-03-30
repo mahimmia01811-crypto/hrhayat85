@@ -1,0 +1,5 @@
+{
+  "name": "Vintage 3D Storybook & Live Monitor",
+  "description": "A 90s vintage cinematic 3D book reader with live WebRTC monitoring for admins.",
+  "requestFramePermissions": ["camera", "microphone"]
+}
